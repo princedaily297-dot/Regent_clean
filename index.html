@@ -67,7 +67,12 @@
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       const url = urlInput.value.trim();
-      if (!url) return;
+
+      if (!url || !url.includes('tiktok.com')) {
+        statusMsg.textContent = 'Please paste a valid TikTok video URL.';
+        statusMsg.classList.remove('hidden');
+        return;
+      }
 
       submitBtn.disabled = true;
       submitBtn.textContent = 'Resolving...';
@@ -75,38 +80,46 @@
       resultBox.classList.add('hidden');
 
       try {
-        const res = await fetch('/api/resolve', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ url })
-        });
-        const data = await res.json();
+        const apiUrl = `https://www.tikwm.com/api/?url=${encodeURIComponent(url)}&hd=1`;
+        const res = await fetch(apiUrl);
+        const json = await res.json();
 
-        if (!res.ok || data.error) {
-          statusMsg.textContent = data.error || 'Could not resolve video.';
+        if (!json || json.code !== 0 || !json.data) {
+          statusMsg.textContent = json?.msg || 'Could not resolve video. Make sure the link is public.';
           statusMsg.classList.remove('hidden');
-        } else {
-          document.getElementById('author-label').textContent = data.author;
-          document.getElementById('title-label').textContent = data.title;
-          const videoEl = document.getElementById('video-preview');
-          videoEl.src = data.videoUrl;
-          videoEl.poster = data.cover;
-
-          const dlLink = document.getElementById('download-link');
-          dlLink.href = data.videoUrl;
-
-          const audioLink = document.getElementById('audio-link');
-          if (data.musicUrl) {
-            audioLink.href = data.musicUrl;
-            audioLink.classList.remove('hidden');
-          } else {
-            audioLink.classList.add('hidden');
-          }
-
-          resultBox.classList.remove('hidden');
+          return;
         }
+
+        const data = json.data;
+        const cleanVideoUrl = data.hdplay || data.play;
+
+        if (!cleanVideoUrl) {
+          statusMsg.textContent = 'No watermark-free video stream was found for this URL.';
+          statusMsg.classList.remove('hidden');
+          return;
+        }
+
+        document.getElementById('author-label').textContent = data.author?.unique_id ? `@${data.author.unique_id}` : 'Creator';
+        document.getElementById('title-label').textContent = data.title || 'TikTok Video';
+
+        const videoEl = document.getElementById('video-preview');
+        videoEl.src = cleanVideoUrl;
+        videoEl.poster = data.cover || '';
+
+        const dlLink = document.getElementById('download-link');
+        dlLink.href = cleanVideoUrl;
+
+        const audioLink = document.getElementById('audio-link');
+        if (data.music) {
+          audioLink.href = data.music;
+          audioLink.classList.remove('hidden');
+        } else {
+          audioLink.classList.add('hidden');
+        }
+
+        resultBox.classList.remove('hidden');
       } catch (err) {
-        statusMsg.textContent = 'Network error while contacting server.';
+        statusMsg.textContent = 'Request blocked or network error. If CORS blocks browser requests, a small backend proxy is needed.';
         statusMsg.classList.remove('hidden');
       } finally {
         submitBtn.disabled = false;
@@ -115,5 +128,4 @@
     });
   </script>
 </body>
-  </html>
-  
+</html>
