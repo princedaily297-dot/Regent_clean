@@ -11,7 +11,6 @@
     rel="stylesheet"
   />
   <script src="https://cdn.tailwindcss.com"></script>
-  <script defer src="https://unpkg.com/lucide@latest"></script>
   <script>
     tailwind.config = {
       theme: {
@@ -46,69 +45,53 @@
       box-shadow: 0 24px 60px -15px rgba(0, 0, 0, 0.65);
     }
 
-    /* Non-Orbital Hero Accent Motion */
-    @keyframes titleShine {
-      0% { background-position: -150% 0; }
-      100% { background-position: 250% 0; }
-    }
-    .brand-shine {
-      background: linear-gradient(
-        110deg,
-        #ffffff 20%,
-        #fda4af 42%,
-        #a5b4fc 58%,
-        #ffffff 80%
-      );
-      background-size: 220% 100%;
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      animation: titleShine 5s ease-in-out infinite;
-    }
-
-    @keyframes accentSlide {
-      0%, 100% { transform: translateX(-25%); opacity: 0.7; }
-      50% { transform: translateX(25%); opacity: 1; }
-    }
-    .accent-line {
-      animation: accentSlide 3.2s ease-in-out infinite;
-    }
-
-    @keyframes rcSpin {
+    /* Live Orbital Hero Animations */
+    @keyframes orbitSpin {
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
-    .rc-spinner {
-      display: inline-block;
-      width: 18px;
-      height: 18px;
-      min-width: 18px;
-      border-radius: 9999px;
-      border: 2.5px solid rgba(255, 255, 255, 0.25);
-      border-top-color: #ffffff;
-      border-right-color: #fb7185;
-      animation: rcSpin 0.65s linear infinite;
+    @keyframes orbitSpinReverse {
+      0% { transform: rotate(360deg); }
+      100% { transform: rotate(0deg); }
+    }
+    @keyframes floatPulse {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-3px); }
+    }
+    .orbit-ring-1 {
+      animation: orbitSpin 9s linear infinite;
+    }
+    .orbit-ring-2 {
+      animation: orbitSpinReverse 13s linear infinite;
+    }
+    .orbit-float {
+      animation: floatPulse 3.5s ease-in-out infinite;
     }
 
-    @keyframes rcSweep {
-      0% { transform: translateX(-100%); }
-      100% { transform: translateX(260%); }
+    /* Link Loading Orbital Animation */
+    @keyframes linkOrbitA {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
-    .rc-progress-track {
-      position: relative;
-      width: 100%;
-      height: 6px;
-      border-radius: 9999px;
-      background: rgba(15, 23, 42, 0.95);
-      overflow: hidden;
-      border: 1px solid rgba(148, 163, 184, 0.15);
+    @keyframes linkOrbitB {
+      0% { transform: rotate(360deg); }
+      100% { transform: rotate(0deg); }
     }
-    .rc-progress-bar {
-      width: 42%;
-      height: 100%;
+    .link-orbit-outer {
+      width: 44px;
+      height: 44px;
       border-radius: 9999px;
-      background: linear-gradient(90deg, #f43f5e, #818cf8, #34d399);
-      animation: rcSweep 1.05s ease-in-out infinite;
+      border: 2px dashed rgba(251, 113, 133, 0.75);
+      animation: linkOrbitA 1.1s linear infinite;
+    }
+    .link-orbit-inner {
+      position: absolute;
+      width: 28px;
+      height: 28px;
+      border-radius: 9999px;
+      border: 2px solid rgba(129, 140, 248, 0.85);
+      border-top-color: #34d399;
+      animation: linkOrbitB 0.75s linear infinite;
     }
 
     @keyframes rcEq {
@@ -130,24 +113,28 @@
 </head>
 <body class="text-slate-100 min-h-screen flex flex-col items-center justify-between px-4 py-5 selection:bg-rose-500 selection:text-white">
 
-  <!-- TOP REGENT_TECH HERO SIGN (NON-ORBITAL) -->
+  <!-- TOP LIVE ORBITAL REGENT_TECH HERO SIGN -->
   <header class="w-full max-w-md pt-1 pb-2">
-    <div class="glass-panel rounded-3xl px-5 py-5 relative overflow-hidden flex flex-col items-center justify-center text-center">
+    <div class="glass-panel rounded-3xl p-4 relative overflow-hidden flex flex-col items-center justify-center text-center">
       <div class="absolute inset-0 bg-gradient-to-r from-rose-600/10 via-indigo-600/10 to-emerald-500/10 pointer-events-none"></div>
 
-      <span class="relative z-10 text-[10px] font-mono uppercase tracking-[0.26em] text-rose-300/90 mb-1.5">
-        Official Studio
-      </span>
+      <div class="relative w-full h-24 flex items-center justify-center">
+        <div class="orbit-ring-1 absolute w-56 h-20 rounded-[100%] border border-rose-500/40 shadow-[0_0_20px_rgba(244,63,94,0.2)]">
+          <span class="absolute -top-1.5 left-1/2 -translate-x-1/2 w-3 h-3 rounded-full bg-rose-400 shadow-[0_0_12px_#fb7185]"></span>
+        </div>
 
-      <h1 class="brand-shine relative z-10 font-display font-bold text-3xl sm:text-4xl tracking-[0.12em]">
-        REGENT_TECH
-      </h1>
+        <div class="orbit-ring-2 absolute w-48 h-16 rounded-[100%] border border-indigo-400/45 shadow-[0_0_20px_rgba(99,102,241,0.2)]">
+          <span class="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-2.5 h-2.5 rounded-full bg-indigo-400 shadow-[0_0_12px_#818cf8]"></span>
+        </div>
 
-      <div class="relative z-10 w-36 h-[2px] bg-slate-800 rounded-full overflow-hidden my-2.5">
-        <div class="accent-line w-full h-full bg-gradient-to-r from-rose-500 via-indigo-400 to-emerald-400"></div>
+        <div class="orbit-float relative z-10 px-4 py-1.5 rounded-2xl bg-slate-950/80 border border-white/10 backdrop-blur-md shadow-xl">
+          <h1 class="font-display font-bold text-2xl sm:text-3xl tracking-[0.14em] bg-gradient-to-r from-white via-rose-200 to-indigo-200 bg-clip-text text-transparent">
+            REGENT_TECH
+          </h1>
+        </div>
       </div>
 
-      <p class="relative z-10 text-[11px] font-mono uppercase tracking-[0.2em] text-slate-400">
+      <p class="text-[11px] font-mono uppercase tracking-[0.2em] text-slate-400 mt-1">
         RegentClean Media &amp; Audio Studio
       </p>
     </div>
@@ -232,18 +219,16 @@
         </button>
       </form>
 
-      <!-- Active Loading Motion Box -->
-      <div id="loading-skeleton" class="hidden pt-3 border-t border-slate-800/90 space-y-3">
-        <div class="rounded-2xl bg-slate-950/90 border border-rose-500/30 p-3.5 space-y-2.5">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-2.5">
-              <span class="rc-spinner"></span>
-              <span class="text-xs font-display font-semibold text-white">Resolving clean video stream...</span>
-            </div>
-            <span class="text-[10px] font-mono text-rose-300">LOADING</span>
+      <!-- Orbital Loading Animation While Link Resolves -->
+      <div id="loading-skeleton" class="hidden pt-3 border-t border-slate-800/90">
+        <div class="rounded-2xl bg-slate-950/90 border border-rose-500/30 p-4 flex items-center gap-4">
+          <div class="relative w-11 h-11 flex items-center justify-center shrink-0">
+            <div class="link-orbit-outer"></div>
+            <div class="link-orbit-inner"></div>
           </div>
-          <div class="rc-progress-track">
-            <div class="rc-progress-bar"></div>
+          <div class="min-w-0 flex-1">
+            <p class="text-xs font-display font-semibold text-white">Orbital Link Scan Active...</p>
+            <p class="text-[11px] text-slate-400 mt-0.5">Fetching watermark-free video &amp; audio...</p>
           </div>
         </div>
       </div>
@@ -355,24 +340,19 @@
         <input id="video-file-input" type="file" accept="video/*" class="hidden" />
       </label>
 
-      <!-- Live Equalizer + Progress Loader While Extracting Audio -->
-      <div id="audio-loader" class="hidden rounded-2xl bg-slate-950/90 border border-indigo-400/35 p-3.5 space-y-2.5">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center gap-3">
-            <div class="flex items-end gap-1 h-5">
-              <span class="rc-eq-bar bg-indigo-400"></span>
-              <span class="rc-eq-bar bg-rose-400"></span>
-              <span class="rc-eq-bar bg-emerald-400"></span>
-              <span class="rc-eq-bar bg-indigo-300"></span>
-              <span class="rc-eq-bar bg-rose-300"></span>
-            </div>
-            <span class="text-xs font-display font-semibold text-indigo-200">Extracting clean audio...</span>
+      <!-- Live Equalizer Loader While Extracting Audio -->
+      <div id="audio-loader" class="hidden rounded-2xl bg-slate-950/90 border border-indigo-400/35 p-3.5 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="flex items-end gap-1 h-5">
+            <span class="rc-eq-bar bg-indigo-400"></span>
+            <span class="rc-eq-bar bg-rose-400"></span>
+            <span class="rc-eq-bar bg-emerald-400"></span>
+            <span class="rc-eq-bar bg-indigo-300"></span>
+            <span class="rc-eq-bar bg-rose-300"></span>
           </div>
-          <span class="text-[10px] font-mono text-emerald-300">ACTIVE</span>
+          <span class="text-xs font-display font-semibold text-indigo-200">Extracting clean audio...</span>
         </div>
-        <div class="rc-progress-track">
-          <div class="rc-progress-bar"></div>
-        </div>
+        <span class="text-[10px] font-mono text-emerald-300">ACTIVE</span>
       </div>
 
       <div class="flex gap-2">
@@ -419,14 +399,6 @@
   </footer>
 
   <script>
-    function refreshIcons() {
-      try {
-        if (window.lucide && typeof window.lucide.createIcons === 'function') {
-          window.lucide.createIcons();
-        }
-      } catch (e) {}
-    }
-
     const tabTiktok = document.getElementById('tab-tiktok');
     const tabAudio = document.getElementById('tab-audio');
     const panelTiktok = document.getElementById('panel-tiktok');
@@ -459,4 +431,357 @@
     let currentVideoUrl = '';
     let currentFilename = 'regentclean.mp4';
 
-    function setSubmitLoading(
+    function setSubmitLoading(isLoading) {
+      submitBtn.disabled = isLoading;
+      if (isLoading) {
+        submitBtn.innerHTML = '<span>Resolving Link...</span>';
+        loadingSkeleton.classList.remove('hidden');
+      } else {
+        submitBtn.innerHTML = '<span id="submit-btn-text">Get Clean Video</span>';
+        loadingSkeleton.classList.add('hidden');
+      }
+    }
+
+    function escapeHtml(str) {
+      return String(str || '').replace(/[&<>"']/g, (ch) => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+      }[ch]));
+    }
+
+    function showStatus(message) {
+      statusText.textContent = message;
+      statusMsg.classList.remove('hidden');
+    }
+
+    function hideStatus() {
+      statusMsg.classList.add('hidden');
+      statusText.textContent = '';
+    }
+
+    function formatCount(num) {
+      if (typeof num !== 'number' || Number.isNaN(num)) return '—';
+      if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+      if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+      return String(num);
+    }
+
+    urlInput.addEventListener('input', () => {
+      hideStatus();
+      pasteLabel.textContent = urlInput.value.trim() ? 'Clear' : 'Paste';
+    });
+
+    async function handlePasteOrClear() {
+      if (urlInput.value.trim()) {
+        urlInput.value = '';
+        pasteLabel.textContent = 'Paste';
+        hideStatus();
+        urlInput.focus();
+        return;
+      }
+
+      try {
+        if (navigator.clipboard && navigator.clipboard.readText) {
+          const text = await navigator.clipboard.readText();
+          if (text) {
+            urlInput.value = text.trim();
+            pasteLabel.textContent = 'Clear';
+            hideStatus();
+            return;
+          }
+        }
+        showStatus('Tap inside the box and paste your link from your keyboard.');
+      } catch (err) {
+        showStatus('Tap inside the box and paste your link from your keyboard.');
+      }
+    }
+
+    function saveToHistory(item) {
+      try {
+        let history = JSON.parse(localStorage.getItem('rc_history') || '[]');
+        history = history.filter((h) => h.url !== item.url);
+        history.unshift(item);
+        history = history.slice(0, 5);
+        localStorage.setItem('rc_history', JSON.stringify(history));
+        renderHistory();
+      } catch (e) {}
+    }
+
+    function clearHistory() {
+      try {
+        localStorage.removeItem('rc_history');
+      } catch (e) {}
+      renderHistory();
+    }
+
+    function loadFromHistory(encodedUrl) {
+      const url = decodeURIComponent(encodedUrl);
+      urlInput.value = url;
+      pasteLabel.textContent = 'Clear';
+      form.dispatchEvent(new Event('submit', { cancelable: true }));
+    }
+
+    function renderHistory() {
+      let history = [];
+      try {
+        history = JSON.parse(localStorage.getItem('rc_history') || '[]');
+      } catch (e) {}
+
+      const card = document.getElementById('history-card');
+      const list = document.getElementById('history-list');
+
+      if (!history.length) {
+        card.classList.add('hidden');
+        list.innerHTML = '';
+        return;
+      }
+
+      card.classList.remove('hidden');
+      list.innerHTML = history.map((h) => `
+        <button
+          type="button"
+          onclick="loadFromHistory('${encodeURIComponent(h.url)}')"
+          class="w-full text-left px-3 py-2.5 rounded-2xl bg-slate-950/75 hover:bg-slate-800/80 border border-slate-800/80 flex items-center justify-between gap-2 transition cursor-pointer">
+          <div class="min-w-0">
+            <p class="text-xs font-medium text-slate-200 truncate">${escapeHtml(h.author)}</p>
+            <p class="text-[11px] text-slate-400 truncate">${escapeHtml(h.title)}</p>
+          </div>
+          <span class="text-[11px] font-mono text-rose-400 shrink-0 font-medium">Open</span>
+        </button>
+      `).join('');
+    }
+
+    async function downloadDirectVideo() {
+      if (!currentVideoUrl) return;
+      const btn = document.getElementById('direct-dl-btn');
+      btn.disabled = true;
+      btn.innerHTML = '<span>Preparing download...</span>';
+
+      try {
+        const res = await fetch(currentVideoUrl);
+        if (!res.ok) throw new Error('Fetch failed');
+        const blob = await res.blob();
+        const blobUrl = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = blobUrl;
+        a.download = currentFilename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(blobUrl), 2000);
+        btn.innerHTML = '<span>Saved!</span>';
+      } catch (err) {
+        window.open(currentVideoUrl, '_blank', 'noopener,noreferrer');
+        btn.innerHTML = '<span>Opened in Tab</span>';
+      } finally {
+        setTimeout(() => {
+          btn.innerHTML = '<span id="dl-btn-text">Download HD MP4</span>';
+          btn.disabled = false;
+        }, 1800);
+      }
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const url = urlInput.value.trim();
+
+      if (!url || !url.includes('tiktok.com')) {
+        showStatus('Please enter a valid public TikTok URL.');
+        return;
+      }
+
+      hideStatus();
+      resultBox.classList.add('hidden');
+      setSubmitLoading(true);
+
+      try {
+        const apiUrl = `https://www.tikwm.com/api/?url=${encodeURIComponent(url)}&hd=1`;
+        const res = await fetch(apiUrl);
+        const json = await res.json();
+
+        if (!json || json.code !== 0 || !json.data) {
+          showStatus(json?.msg || 'Could not fetch video. Make sure the post is public.');
+          return;
+        }
+
+        const data = json.data;
+        currentVideoUrl = data.hdplay || data.play;
+
+        if (!currentVideoUrl) {
+          showStatus('No watermark-free video stream found for this link.');
+          return;
+        }
+
+        const username = data.author?.unique_id ? `@${data.author.unique_id}` : 'Creator';
+        const title = data.title || 'TikTok Video';
+        currentFilename = `${(data.author?.unique_id || 'regentclean')}-${data.id || Date.now()}.mp4`;
+
+        document.getElementById('author-avatar').src = data.author?.avatar || data.cover || '';
+        document.getElementById('author-label').textContent = username;
+        document.getElementById('title-label').textContent = title;
+
+        document.getElementById('stat-plays').textContent = formatCount(data.play_count);
+        document.getElementById('stat-likes').textContent = formatCount(data.digg_count);
+        document.getElementById('stat-shares').textContent = formatCount(data.share_count);
+
+        const videoEl = document.getElementById('video-preview');
+        videoEl.src = currentVideoUrl;
+        videoEl.poster = data.cover || '';
+
+        const audioLink = document.getElementById('audio-link');
+        if (data.music) {
+          audioLink.href = data.music;
+          audioLink.classList.remove('hidden');
+        } else {
+          audioLink.classList.add('hidden');
+        }
+
+        const coverLink = document.getElementById('cover-link');
+        if (data.cover) {
+          coverLink.href = data.cover;
+          coverLink.classList.remove('hidden');
+        } else {
+          coverLink.classList.add('hidden');
+        }
+
+        saveToHistory({ url, author: username, title });
+        resultBox.classList.remove('hidden');
+      } catch (err) {
+        showStatus('Network error while fetching video details. Please try again.');
+      } finally {
+        setSubmitLoading(false);
+      }
+    });
+
+    const fileInput = document.getElementById('video-file-input');
+    const fileNameLabel = document.getElementById('file-chosen-name');
+    const convertBtn = document.getElementById('convert-audio-btn');
+    const stopExtractBtn = document.getElementById('stop-extract-btn');
+    const audioLoader = document.getElementById('audio-loader');
+    const audioStatus = document.getElementById('audio-status');
+    const audioResult = document.getElementById('audio-result');
+    const extractedPlayer = document.getElementById('extracted-audio-player');
+    const extractedDownload = document.getElementById('extracted-audio-download');
+
+    let selectedVideoFile = null;
+    let activeRecorder = null;
+    let activeTempVideo = null;
+
+    fileInput.addEventListener('change', () => {
+      const file = fileInput.files && fileInput.files[0];
+      audioStatus.classList.add('hidden');
+      audioResult.classList.add('hidden');
+
+      if (!file) {
+        selectedVideoFile = null;
+        fileNameLabel.textContent = 'Upload Video';
+        convertBtn.disabled = true;
+        return;
+      }
+
+      selectedVideoFile = file;
+      fileNameLabel.textContent = file.name;
+      convertBtn.disabled = false;
+    });
+
+    function stopExtractionEarly() {
+      if (activeTempVideo) {
+        activeTempVideo.pause();
+      }
+      if (activeRecorder && activeRecorder.state !== 'inactive') {
+        activeRecorder.stop();
+      }
+    }
+
+    async function extractAudioFromVideo() {
+      if (!selectedVideoFile) return;
+
+      if (typeof MediaRecorder === 'undefined') {
+        audioStatus.textContent = 'Audio recording is not supported on this mobile browser.';
+        audioStatus.classList.remove('hidden');
+        return;
+      }
+
+      convertBtn.disabled = true;
+      convertBtn.innerHTML = '<span>Extracting...</span>';
+      audioLoader.classList.remove('hidden');
+      stopExtractBtn.classList.remove('hidden');
+      audioStatus.classList.add('hidden');
+      audioResult.classList.add('hidden');
+
+      const tempVideo = document.createElement('video');
+      activeTempVideo = tempVideo;
+      tempVideo.src = URL.createObjectURL(selectedVideoFile);
+      tempVideo.muted = false;
+      tempVideo.playsInline = true;
+
+      try {
+        await new Promise((resolve, reject) => {
+          tempVideo.onloadedmetadata = resolve;
+          tempVideo.onerror = () => reject(new Error('Could not load video file'));
+        });
+
+        const stream = tempVideo.captureStream ? tempVideo.captureStream() : tempVideo.mozCaptureStream();
+        const audioTracks = stream ? stream.getAudioTracks() : [];
+
+        if (!audioTracks || audioTracks.length === 0) {
+          throw new Error('No audio track detected in this video.');
+        }
+
+        const audioStream = new MediaStream(audioTracks);
+        const mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
+          ? 'audio/webm;codecs=opus'
+          : (MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : '');
+
+        const recorder = mimeType
+          ? new MediaRecorder(audioStream, { mimeType })
+          : new MediaRecorder(audioStream);
+        activeRecorder = recorder;
+
+        const chunks = [];
+        recorder.ondataavailable = (e) => {
+          if (e.data && e.data.size > 0) chunks.push(e.data);
+        };
+
+        const stopped = new Promise((resolve) => {
+          recorder.onstop = resolve;
+        });
+
+        recorder.start();
+        await tempVideo.play();
+
+        tempVideo.onended = () => {
+          if (recorder.state !== 'inactive') recorder.stop();
+        };
+
+        await stopped;
+
+        const blob = new Blob(chunks, { type: mimeType || 'audio/webm' });
+        const audioUrl = URL.createObjectURL(blob);
+        const baseName = selectedVideoFile.name.replace(/\.[^/.]+$/, '') || 'regentclean-audio';
+
+        extractedPlayer.src = audioUrl;
+        extractedDownload.href = audioUrl;
+        extractedDownload.download = `${baseName}.webm`;
+        audioResult.classList.remove('hidden');
+      } catch (err) {
+        audioStatus.textContent = err.message || 'Unable to extract audio from this video.';
+        audioStatus.classList.remove('hidden');
+      } finally {
+        URL.revokeObjectURL(tempVideo.src);
+        activeRecorder = null;
+        activeTempVideo = null;
+        audioLoader.classList.add('hidden');
+        stopExtractBtn.classList.add('hidden');
+        convertBtn.disabled = false;
+        convertBtn.innerHTML = '<span id="convert-btn-text">Upload &amp; Convert to Audio</span>';
+      }
+    }
+
+    renderHistory();
+  </script>
+</body>
+</html>
