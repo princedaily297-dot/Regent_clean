@@ -11,7 +11,7 @@
     rel="stylesheet"
   />
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/lucide@latest"></script>
+  <script defer src="https://unpkg.com/lucide@latest"></script>
   <script>
     tailwind.config = {
       theme: {
@@ -39,14 +39,13 @@
       -moz-osx-font-smoothing: grayscale;
     }
     .glass-panel {
-      background: linear-gradient(165deg, rgba(15, 23, 42, 0.85), rgba(9, 13, 26, 0.9));
+      background: linear-gradient(165deg, rgba(15, 23, 42, 0.86), rgba(9, 13, 26, 0.92));
       backdrop-filter: blur(18px);
       -webkit-backdrop-filter: blur(18px);
       border: 1px solid rgba(148, 163, 184, 0.16);
       box-shadow: 0 24px 60px -15px rgba(0, 0, 0, 0.65);
     }
 
-    /* Orbital Motion Animations */
     @keyframes orbitSpin {
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
@@ -69,18 +68,19 @@
       animation: floatPulse 3.5s ease-in-out infinite;
     }
 
-    /* Loading Spinner & Shimmer Animations */
     @keyframes loaderOrbit {
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
     .loader-orbit {
+      display: inline-block;
       width: 16px;
       height: 16px;
       border-radius: 9999px;
       border: 2px solid rgba(255, 255, 255, 0.25);
       border-top-color: #ffffff;
       animation: loaderOrbit 0.75s linear infinite;
+      flex-shrink: 0;
     }
 
     @keyframes shimmerSweep {
@@ -170,31 +170,25 @@
     </section>
 
     <!-- Mode Switcher Tabs -->
-    <div role="tablist" class="grid grid-cols-2 gap-1.5 p-1.5 rounded-2xl glass-panel">
+    <div class="grid grid-cols-2 gap-1.5 p-1.5 rounded-2xl glass-panel">
       <button
         type="button"
         id="tab-tiktok"
-        role="tab"
-        aria-selected="true"
         onclick="switchMode('tiktok')"
-        class="py-2.5 px-3 rounded-xl text-xs font-display font-semibold flex items-center justify-center gap-1.5 bg-rose-600 text-white shadow-md shadow-rose-600/25 transition">
-        <i data-lucide="clapperboard" class="w-3.5 h-3.5"></i>
+        class="py-2.5 px-3 rounded-xl text-xs font-display font-semibold flex items-center justify-center gap-1.5 bg-rose-600 text-white shadow-md shadow-rose-600/25 transition cursor-pointer">
         <span>Clean Video</span>
       </button>
       <button
         type="button"
         id="tab-audio"
-        role="tab"
-        aria-selected="false"
         onclick="switchMode('audio')"
-        class="py-2.5 px-3 rounded-xl text-xs font-display font-semibold flex items-center justify-center gap-1.5 text-slate-300 hover:text-white hover:bg-slate-800/60 transition">
-        <i data-lucide="file-audio" class="w-3.5 h-3.5"></i>
+        class="py-2.5 px-3 rounded-xl text-xs font-display font-semibold flex items-center justify-center gap-1.5 text-slate-300 hover:text-white hover:bg-slate-800/60 transition cursor-pointer">
         <span>Video to Audio</span>
       </button>
     </div>
 
     <!-- VIEW 1: Clean Video Link Resolver -->
-    <section id="panel-tiktok" data-view="tiktok" class="glass-panel rounded-3xl p-5 space-y-4">
+    <section id="panel-tiktok" class="glass-panel rounded-3xl p-5 space-y-4">
       <div>
         <h2 class="font-display text-lg font-bold tracking-tight text-white">Watermark-Free Video</h2>
         <p class="text-xs text-slate-400 mt-0.5">Paste a public TikTok link to preview, save HD MP4, or grab audio.</p>
@@ -213,8 +207,7 @@
             type="button"
             id="paste-btn"
             onclick="handlePasteOrClear()"
-            class="absolute right-2 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-medium text-slate-200 flex items-center gap-1 transition">
-            <i data-lucide="clipboard-paste" class="w-3.5 h-3.5"></i>
+            class="absolute right-2 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-medium text-slate-200 transition cursor-pointer">
             <span id="paste-label">Paste</span>
           </button>
         </div>
@@ -222,9 +215,8 @@
         <button
           type="submit"
           id="submit-btn"
-          class="w-full bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-500 hover:to-pink-500 active:scale-[0.99] transition py-3 rounded-2xl font-display font-semibold text-sm text-white shadow-lg shadow-rose-600/25 flex items-center justify-center gap-2">
-          <i data-lucide="sparkles" class="w-4 h-4"></i>
-          <span>Get Clean Video</span>
+          class="w-full bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-500 hover:to-pink-500 active:scale-[0.99] transition py-3 rounded-2xl font-display font-semibold text-sm text-white shadow-lg shadow-rose-600/25 flex items-center justify-center gap-2 cursor-pointer">
+          <span id="submit-btn-text">Get Clean Video</span>
         </button>
       </form>
 
@@ -245,8 +237,7 @@
         </div>
       </div>
 
-      <div id="status-msg" class="hidden text-xs text-amber-200 bg-amber-500/10 border border-amber-500/25 rounded-2xl p-3 flex items-start gap-2">
-        <i data-lucide="alert-circle" class="w-4 h-4 text-amber-300 shrink-0 mt-0.5"></i>
+      <div id="status-msg" class="hidden text-xs text-amber-200 bg-amber-500/10 border border-amber-500/25 rounded-2xl p-3">
         <span id="status-text"></span>
       </div>
 
@@ -288,8 +279,7 @@
             type="button"
             id="direct-dl-btn"
             onclick="downloadDirectVideo()"
-            class="w-full bg-emerald-600 hover:bg-emerald-500 active:scale-[0.99] transition py-3 rounded-2xl font-display text-xs font-semibold text-white shadow-lg shadow-emerald-600/20 flex items-center justify-center gap-2">
-            <i data-lucide="download" class="w-4 h-4"></i>
+            class="w-full bg-emerald-600 hover:bg-emerald-500 active:scale-[0.99] transition py-3 rounded-2xl font-display text-xs font-semibold text-white shadow-lg shadow-emerald-600/20 flex items-center justify-center gap-2 cursor-pointer">
             <span id="dl-btn-text">Download HD MP4</span>
           </button>
 
@@ -299,7 +289,6 @@
               target="_blank"
               rel="noopener noreferrer"
               class="py-2.5 px-3 rounded-xl bg-slate-800/90 hover:bg-slate-700 text-xs font-medium text-slate-200 flex items-center justify-center gap-1.5 transition">
-              <i data-lucide="music" class="w-3.5 h-3.5 text-rose-400"></i>
               <span>Audio</span>
             </a>
             <a
@@ -307,7 +296,6 @@
               target="_blank"
               rel="noopener noreferrer"
               class="py-2.5 px-3 rounded-xl bg-slate-800/90 hover:bg-slate-700 text-xs font-medium text-slate-200 flex items-center justify-center gap-1.5 transition">
-              <i data-lucide="image" class="w-3.5 h-3.5 text-indigo-400"></i>
               <span>Cover</span>
             </a>
           </div>
@@ -317,14 +305,11 @@
       <!-- Recent History -->
       <div id="history-card" class="hidden pt-4 border-t border-slate-800/80">
         <div class="flex items-center justify-between mb-2.5">
-          <span class="text-xs font-display font-semibold text-slate-300 flex items-center gap-1.5">
-            <i data-lucide="clock" class="w-3.5 h-3.5 text-rose-400"></i>
-            Recent
-          </span>
+          <span class="text-xs font-display font-semibold text-slate-300">Recent</span>
           <button
             type="button"
             onclick="clearHistory()"
-            class="text-[11px] text-slate-400 hover:text-rose-400 transition">
+            class="text-[11px] text-slate-400 hover:text-rose-400 transition cursor-pointer">
             Clear
           </button>
         </div>
@@ -333,7 +318,7 @@
     </section>
 
     <!-- VIEW 2: Video to Audio Page (Upload Video) -->
-    <section id="panel-audio" data-view="audio" class="hidden glass-panel rounded-3xl p-5 space-y-4">
+    <section id="panel-audio" class="hidden glass-panel rounded-3xl p-5 space-y-4">
       <div class="flex items-center justify-between gap-2">
         <div>
           <span class="text-[10px] font-mono uppercase tracking-wider text-indigo-300">Audio Studio</span>
@@ -342,9 +327,8 @@
         <button
           type="button"
           onclick="switchMode('tiktok')"
-          class="px-2.5 py-1.5 rounded-xl bg-slate-800/90 hover:bg-slate-700 text-xs font-medium text-slate-200 flex items-center gap-1 transition">
-          <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
-          <span>Clean Video</span>
+          class="px-2.5 py-1.5 rounded-xl bg-slate-800/90 hover:bg-slate-700 text-xs font-medium text-slate-200 transition cursor-pointer">
+          ← Clean Video
         </button>
       </div>
 
@@ -355,9 +339,6 @@
       <label
         for="video-file-input"
         class="block border-2 border-dashed border-slate-700 hover:border-indigo-400 rounded-2xl p-5 text-center cursor-pointer bg-slate-950/70 transition">
-        <div class="w-12 h-12 mx-auto rounded-2xl bg-indigo-500/15 border border-indigo-500/30 flex items-center justify-center text-indigo-300 mb-2.5">
-          <i data-lucide="upload-cloud" class="w-6 h-6"></i>
-        </div>
         <p id="file-chosen-name" class="text-sm font-display font-semibold text-white">Upload Video</p>
         <p class="text-[11px] text-slate-400 mt-1">Tap to select an MP4, MOV, or WebM video</p>
         <input id="video-file-input" type="file" accept="video/*" class="hidden" />
@@ -383,8 +364,7 @@
           id="convert-audio-btn"
           onclick="extractAudioFromVideo()"
           disabled
-          class="flex-1 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-45 disabled:cursor-not-allowed active:scale-[0.99] transition py-3 rounded-2xl font-display font-semibold text-sm text-white shadow-lg shadow-indigo-600/25 flex items-center justify-center gap-2">
-          <i data-lucide="headphones" class="w-4 h-4"></i>
+          class="flex-1 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-45 disabled:cursor-not-allowed active:scale-[0.99] transition py-3 rounded-2xl font-display font-semibold text-sm text-white shadow-lg shadow-indigo-600/25 flex items-center justify-center gap-2 cursor-pointer">
           <span id="convert-btn-text">Upload &amp; Convert to Audio</span>
         </button>
 
@@ -392,7 +372,7 @@
           type="button"
           id="stop-extract-btn"
           onclick="stopExtractionEarly()"
-          class="hidden px-4 py-3 rounded-2xl bg-rose-600 hover:bg-rose-500 font-display font-semibold text-xs text-white transition">
+          class="hidden px-4 py-3 rounded-2xl bg-rose-600 hover:bg-rose-500 font-display font-semibold text-xs text-white transition cursor-pointer">
           Stop &amp; Save
         </button>
       </div>
@@ -405,7 +385,6 @@
           id="extracted-audio-download"
           download="regentclean-audio.webm"
           class="w-full bg-emerald-600 hover:bg-emerald-500 transition py-2.5 px-4 rounded-2xl font-display text-xs font-semibold text-white flex items-center justify-center gap-2">
-          <i data-lucide="download" class="w-4 h-4"></i>
           <span>Download Audio File</span>
         </a>
       </div>
@@ -423,7 +402,13 @@
   </footer>
 
   <script>
-    lucide.createIcons();
+    function refreshIcons() {
+      try {
+        if (window.lucide && typeof window.lucide.createIcons === 'function') {
+          window.lucide.createIcons();
+        }
+      } catch (e) {}
+    }
 
     const tabTiktok = document.getElementById('tab-tiktok');
     const tabAudio = document.getElementById('tab-audio');
@@ -431,18 +416,384 @@
     const panelAudio = document.getElementById('panel-audio');
 
     function switchMode(mode) {
-      const isTiktok = mode === 'tiktok';
-
-      if (isTiktok) {
-        panelTiktok.classList.remove('hidden');
-        panelAudio.classList.add('hidden');
-        tabTiktok.setAttribute('aria-selected', 'true');
-        tabAudio.setAttribute('aria-selected', 'false');
-        tabTiktok.className = 'py-2.5 px-3 rounded-xl text-xs font-display font-semibold flex items-center justify-center gap-1.5 bg-rose-600 text-white shadow-md shadow-rose-600/25 transition';
-        tabAudio.className = 'py-2.5 px-3 rounded-xl text-xs font-display font-semibold flex items-center justify-center gap-1.5 text-slate-300 hover:text-white hover:bg-slate-800/60 transition';
-      } else {
+      if (mode === 'audio') {
         panelAudio.classList.remove('hidden');
         panelTiktok.classList.add('hidden');
-        tabAudio.setAttribute('aria-selected', 'true');
-        tabTiktok.setAttribute('aria-selected', 'false');
-        tabAudio.className = 'py-2.5 px-3 rounded-xl text-xs font-
+        tabAudio.className = 'py-2.5 px-3 rounded-xl text-xs font-display font-semibold flex items-center justify-center gap-1.5 bg-indigo-600 text-white shadow-md shadow-indigo-600/25 transition cursor-pointer';
+        tabTiktok.className = 'py-2.5 px-3 rounded-xl text-xs font-display font-semibold flex items-center justify-center gap-1.5 text-slate-300 hover:text-white hover:bg-slate-800/60 transition cursor-pointer';
+      } else {
+        panelTiktok.classList.remove('hidden');
+        panelAudio.classList.add('hidden');
+        tabTiktok.className = 'py-2.5 px-3 rounded-xl text-xs font-display font-semibold flex items-center justify-center gap-1.5 bg-rose-600 text-white shadow-md shadow-rose-600/25 transition cursor-pointer';
+        tabAudio.className = 'py-2.5 px-3 rounded-xl text-xs font-display font-semibold flex items-center justify-center gap-1.5 text-slate-300 hover:text-white hover:bg-slate-800/60 transition cursor-pointer';
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    const form = document.getElementById('clean-form');
+    const urlInput = document.getElementById('tiktok-url');
+    const submitBtn = document.getElementById('submit-btn');
+    const loadingSkeleton = document.getElementById('loading-skeleton');
+    const statusMsg = document.getElementById('status-msg');
+    const statusText = document.getElementById('status-text');
+    const resultBox = document.getElementById('result-box');
+    const pasteLabel = document.getElementById('paste-label');
+
+    let currentVideoUrl = '';
+    let currentFilename = 'regentclean.mp4';
+
+    function setSubmitLoading(isLoading) {
+      submitBtn.disabled = isLoading;
+      if (isLoading) {
+        submitBtn.innerHTML = '<span class="loader-orbit"></span><span>Resolving...</span>';
+        loadingSkeleton.classList.remove('hidden');
+      } else {
+        submitBtn.innerHTML = '<span id="submit-btn-text">Get Clean Video</span>';
+        loadingSkeleton.classList.add('hidden');
+      }
+    }
+
+    function escapeHtml(str) {
+      return String(str || '').replace(/[&<>"']/g, (ch) => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+      }[ch]));
+    }
+
+    function showStatus(message) {
+      statusText.textContent = message;
+      statusMsg.classList.remove('hidden');
+    }
+
+    function hideStatus() {
+      statusMsg.classList.add('hidden');
+      statusText.textContent = '';
+    }
+
+    function formatCount(num) {
+      if (typeof num !== 'number' || Number.isNaN(num)) return '—';
+      if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+      if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+      return String(num);
+    }
+
+    urlInput.addEventListener('input', () => {
+      hideStatus();
+      pasteLabel.textContent = urlInput.value.trim() ? 'Clear' : 'Paste';
+    });
+
+    async function handlePasteOrClear() {
+      if (urlInput.value.trim()) {
+        urlInput.value = '';
+        pasteLabel.textContent = 'Paste';
+        hideStatus();
+        urlInput.focus();
+        return;
+      }
+
+      try {
+        if (navigator.clipboard && navigator.clipboard.readText) {
+          const text = await navigator.clipboard.readText();
+          if (text) {
+            urlInput.value = text.trim();
+            pasteLabel.textContent = 'Clear';
+            hideStatus();
+            return;
+          }
+        }
+        showStatus('Tap inside the box and paste your link from your keyboard.');
+      } catch (err) {
+        showStatus('Tap inside the box and paste your link from your keyboard.');
+      }
+    }
+
+    function saveToHistory(item) {
+      try {
+        let history = JSON.parse(localStorage.getItem('rc_history') || '[]');
+        history = history.filter((h) => h.url !== item.url);
+        history.unshift(item);
+        history = history.slice(0, 5);
+        localStorage.setItem('rc_history', JSON.stringify(history));
+        renderHistory();
+      } catch (e) {}
+    }
+
+    function clearHistory() {
+      try {
+        localStorage.removeItem('rc_history');
+      } catch (e) {}
+      renderHistory();
+    }
+
+    function loadFromHistory(encodedUrl) {
+      const url = decodeURIComponent(encodedUrl);
+      urlInput.value = url;
+      pasteLabel.textContent = 'Clear';
+      form.dispatchEvent(new Event('submit', { cancelable: true }));
+    }
+
+    function renderHistory() {
+      let history = [];
+      try {
+        history = JSON.parse(localStorage.getItem('rc_history') || '[]');
+      } catch (e) {}
+
+      const card = document.getElementById('history-card');
+      const list = document.getElementById('history-list');
+
+      if (!history.length) {
+        card.classList.add('hidden');
+        list.innerHTML = '';
+        return;
+      }
+
+      card.classList.remove('hidden');
+      list.innerHTML = history.map((h) => `
+        <button
+          type="button"
+          onclick="loadFromHistory('${encodeURIComponent(h.url)}')"
+          class="w-full text-left px-3 py-2.5 rounded-2xl bg-slate-950/75 hover:bg-slate-800/80 border border-slate-800/80 flex items-center justify-between gap-2 transition cursor-pointer">
+          <div class="min-w-0">
+            <p class="text-xs font-medium text-slate-200 truncate">${escapeHtml(h.author)}</p>
+            <p class="text-[11px] text-slate-400 truncate">${escapeHtml(h.title)}</p>
+          </div>
+          <span class="text-[11px] font-mono text-rose-400 shrink-0 font-medium">Open</span>
+        </button>
+      `).join('');
+    }
+
+    async function downloadDirectVideo() {
+      if (!currentVideoUrl) return;
+      const btn = document.getElementById('direct-dl-btn');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="loader-orbit"></span><span>Preparing download...</span>';
+
+      try {
+        const res = await fetch(currentVideoUrl);
+        if (!res.ok) throw new Error('Fetch failed');
+        const blob = await res.blob();
+        const blobUrl = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = blobUrl;
+        a.download = currentFilename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(blobUrl), 2000);
+        btn.innerHTML = '<span>Saved!</span>';
+      } catch (err) {
+        window.open(currentVideoUrl, '_blank', 'noopener,noreferrer');
+        btn.innerHTML = '<span>Opened in Tab</span>';
+      } finally {
+        setTimeout(() => {
+          btn.innerHTML = '<span id="dl-btn-text">Download HD MP4</span>';
+          btn.disabled = false;
+        }, 1800);
+      }
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const url = urlInput.value.trim();
+
+      if (!url || !url.includes('tiktok.com')) {
+        showStatus('Please enter a valid public TikTok URL.');
+        return;
+      }
+
+      hideStatus();
+      resultBox.classList.add('hidden');
+      setSubmitLoading(true);
+
+      try {
+        const apiUrl = `https://www.tikwm.com/api/?url=${encodeURIComponent(url)}&hd=1`;
+        const res = await fetch(apiUrl);
+        const json = await res.json();
+
+        if (!json || json.code !== 0 || !json.data) {
+          showStatus(json?.msg || 'Could not fetch video. Make sure the post is public.');
+          return;
+        }
+
+        const data = json.data;
+        currentVideoUrl = data.hdplay || data.play;
+
+        if (!currentVideoUrl) {
+          showStatus('No watermark-free video stream found for this link.');
+          return;
+        }
+
+        const username = data.author?.unique_id ? `@${data.author.unique_id}` : 'Creator';
+        const title = data.title || 'TikTok Video';
+        currentFilename = `${(data.author?.unique_id || 'regentclean')}-${data.id || Date.now()}.mp4`;
+
+        document.getElementById('author-avatar').src = data.author?.avatar || data.cover || '';
+        document.getElementById('author-label').textContent = username;
+        document.getElementById('title-label').textContent = title;
+
+        document.getElementById('stat-plays').textContent = formatCount(data.play_count);
+        document.getElementById('stat-likes').textContent = formatCount(data.digg_count);
+        document.getElementById('stat-shares').textContent = formatCount(data.share_count);
+
+        const videoEl = document.getElementById('video-preview');
+        videoEl.src = currentVideoUrl;
+        videoEl.poster = data.cover || '';
+
+        const audioLink = document.getElementById('audio-link');
+        if (data.music) {
+          audioLink.href = data.music;
+          audioLink.classList.remove('hidden');
+        } else {
+          audioLink.classList.add('hidden');
+        }
+
+        const coverLink = document.getElementById('cover-link');
+        if (data.cover) {
+          coverLink.href = data.cover;
+          coverLink.classList.remove('hidden');
+        } else {
+          coverLink.classList.add('hidden');
+        }
+
+        saveToHistory({ url, author: username, title });
+        resultBox.classList.remove('hidden');
+      } catch (err) {
+        showStatus('Network error while fetching video details. Please try again.');
+      } finally {
+        setSubmitLoading(false);
+      }
+    });
+
+    const fileInput = document.getElementById('video-file-input');
+    const fileNameLabel = document.getElementById('file-chosen-name');
+    const convertBtn = document.getElementById('convert-audio-btn');
+    const stopExtractBtn = document.getElementById('stop-extract-btn');
+    const audioLoader = document.getElementById('audio-loader');
+    const audioStatus = document.getElementById('audio-status');
+    const audioResult = document.getElementById('audio-result');
+    const extractedPlayer = document.getElementById('extracted-audio-player');
+    const extractedDownload = document.getElementById('extracted-audio-download');
+
+    let selectedVideoFile = null;
+    let activeRecorder = null;
+    let activeTempVideo = null;
+
+    fileInput.addEventListener('change', () => {
+      const file = fileInput.files && fileInput.files[0];
+      audioStatus.classList.add('hidden');
+      audioResult.classList.add('hidden');
+
+      if (!file) {
+        selectedVideoFile = null;
+        fileNameLabel.textContent = 'Upload Video';
+        convertBtn.disabled = true;
+        return;
+      }
+
+      selectedVideoFile = file;
+      fileNameLabel.textContent = file.name;
+      convertBtn.disabled = false;
+    });
+
+    function stopExtractionEarly() {
+      if (activeTempVideo) {
+        activeTempVideo.pause();
+      }
+      if (activeRecorder && activeRecorder.state !== 'inactive') {
+        activeRecorder.stop();
+      }
+    }
+
+    async function extractAudioFromVideo() {
+      if (!selectedVideoFile) return;
+
+      if (typeof MediaRecorder === 'undefined') {
+        audioStatus.textContent = 'Audio recording is not supported on this mobile browser.';
+        audioStatus.classList.remove('hidden');
+        return;
+      }
+
+      convertBtn.disabled = true;
+      convertBtn.innerHTML = '<span class="loader-orbit"></span><span>Extracting...</span>';
+      audioLoader.classList.remove('hidden');
+      stopExtractBtn.classList.remove('hidden');
+      audioStatus.classList.add('hidden');
+      audioResult.classList.add('hidden');
+
+      const tempVideo = document.createElement('video');
+      activeTempVideo = tempVideo;
+      tempVideo.src = URL.createObjectURL(selectedVideoFile);
+      tempVideo.muted = false;
+      tempVideo.playsInline = true;
+
+      try {
+        await new Promise((resolve, reject) => {
+          tempVideo.onloadedmetadata = resolve;
+          tempVideo.onerror = () => reject(new Error('Could not load video file'));
+        });
+
+        const stream = tempVideo.captureStream ? tempVideo.captureStream() : tempVideo.mozCaptureStream();
+        const audioTracks = stream ? stream.getAudioTracks() : [];
+
+        if (!audioTracks || audioTracks.length === 0) {
+          throw new Error('No audio track detected in this video.');
+        }
+
+        const audioStream = new MediaStream(audioTracks);
+        const mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
+          ? 'audio/webm;codecs=opus'
+          : (MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : '');
+
+        const recorder = mimeType
+          ? new MediaRecorder(audioStream, { mimeType })
+          : new MediaRecorder(audioStream);
+        activeRecorder = recorder;
+
+        const chunks = [];
+        recorder.ondataavailable = (e) => {
+          if (e.data && e.data.size > 0) chunks.push(e.data);
+        };
+
+        const stopped = new Promise((resolve) => {
+          recorder.onstop = resolve;
+        });
+
+        recorder.start();
+        await tempVideo.play();
+
+        tempVideo.onended = () => {
+          if (recorder.state !== 'inactive') recorder.stop();
+        };
+
+        await stopped;
+
+        const blob = new Blob(chunks, { type: mimeType || 'audio/webm' });
+        const audioUrl = URL.createObjectURL(blob);
+        const baseName = selectedVideoFile.name.replace(/\.[^/.]+$/, '') || 'regentclean-audio';
+
+        extractedPlayer.src = audioUrl;
+        extractedDownload.href = audioUrl;
+        extractedDownload.download = `${baseName}.webm`;
+        audioResult.classList.remove('hidden');
+      } catch (err) {
+        audioStatus.textContent = err.message || 'Unable to extract audio from this video.';
+        audioStatus.classList.remove('hidden');
+      } finally {
+        URL.revokeObjectURL(tempVideo.src);
+        activeRecorder = null;
+        activeTempVideo = null;
+        audioLoader.classList.add('hidden');
+        stopExtractBtn.classList.add('hidden');
+        convertBtn.disabled = false;
+        convertBtn.innerHTML = '<span id="convert-btn-text">Upload &amp; Convert to Audio</span>';
+      }
+    }
+
+    renderHistory();
+    window.addEventListener('DOMContentLoaded', refreshIcons);
+  </script>
+</body>
+</html>
