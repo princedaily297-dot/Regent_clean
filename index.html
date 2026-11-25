@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RegentClean</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-950 text-white min-h-screen flex flex-col items-center justify-center p-4">
+  <div class="w-full max-w-md bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
+    <div class="mb-4">
+      <span class="text-xs uppercase tracking-wider text-rose-400 font-semibold">RegentClean</span>
+      <h1 class="text-xl font-bold mt-1">Clean Video Resolver</h1>
+      <p class="text-xs text-slate-400 mt-1">Paste a public TikTok URL to preview and open the watermark-free video.</p>
+    </div>
+
+    <form id="clean-form" class="space-y-3">
+      <input
+        type="url"
+        id="tiktok-url"
+        required
+        placeholder="https://www.tiktok.com/@user/video/..."
+        class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-rose-500"
+      />
+      <button
+        type="submit"
+        id="submit-btn"
+        class="w-full bg-rose-600 hover:bg-rose-500 active:scale-[0.99] transition py-2.5 rounded-xl font-semibold text-sm">
+        Get Clean Video
+      </button>
+    </form>
+
+    <div id="status-msg" class="hidden mt-4 text-xs text-amber-300 bg-amber-500/10 border border-amber-500/20 rounded-xl p-3"></div>
+
+    <div id="result-box" class="hidden mt-5 space-y-3 border-t border-slate-800 pt-4">
+      <div class="text-xs text-slate-400">
+        <span id="author-label" class="font-semibold text-white"></span> — <span id="title-label"></span>
+      </div>
+      <video id="video-preview" controls playsinline class="w-full rounded-xl bg-black max-h-80"></video>
+      <div class="flex gap-2">
+        <a
+          id="download-link"
+          download="regentclean-video.mp4"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="flex-1 text-center bg-emerald-600 hover:bg-emerald-500 transition py-2.5 rounded-xl text-xs font-semibold">
+          Open / Save Video
+        </a>
+        <a
+          id="audio-link"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="px-3.5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-medium">
+          Audio
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('clean-form');
+    const urlInput = document.getElementById('tiktok-url');
+    const submitBtn = document.getElementById('submit-btn');
+    const statusMsg = document.getElementById('status-msg');
+    const resultBox = document.getElementById('result-box');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const url = urlInput.value.trim();
+      if (!url) return;
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Resolving...';
+      statusMsg.classList.add('hidden');
+      resultBox.classList.add('hidden');
+
+      try {
+        const res = await fetch('/api/resolve', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url })
+        });
+        const data = await res.json();
+
+        if (!res.ok || data.error) {
+          statusMsg.textContent = data.error || 'Could not resolve video.';
+          statusMsg.classList.remove('hidden');
+        } else {
+          document.getElementById('author-label').textContent = data.author;
+          document.getElementById('title-label').textContent = data.title;
+          const videoEl = document.getElementById('video-preview');
+          videoEl.src = data.videoUrl;
+          videoEl.poster = data.cover;
+
+          const dlLink = document.getElementById('download-link');
+          dlLink.href = data.videoUrl;
+
+          const audioLink = document.getElementById('audio-link');
+          if (data.musicUrl) {
+            audioLink.href = data.musicUrl;
+            audioLink.classList.remove('hidden');
+          } else {
+            audioLink.classList.add('hidden');
+          }
+
+          resultBox.classList.remove('hidden');
+        }
+      } catch (err) {
+        statusMsg.textContent = 'Network error while contacting server.';
+        statusMsg.classList.remove('hidden');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Get Clean Video';
+      }
+    });
+  </script>
+</body>
+  </html>
+  
