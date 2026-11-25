@@ -449,4 +449,279 @@
       history = history.filter((h) => h.url !== item.url);
       history.unshift(item);
       history = history.slice(0, 5);
-      localStorage.setItem('rc_history', JSON.stringify(hi
+      localStorage.setItem('rc_history', JSON.stringify(history));
+      renderHistory();
+    }
+
+    function clearHistory() {
+      localStorage.removeItem('rc_history');
+      renderHistory();
+    }
+
+    function loadFromHistory(encodedUrl) {
+      const url = decodeURIComponent(encodedUrl);
+      urlInput.value = url;
+      pasteLabel.textContent = 'Clear';
+      form.requestSubmit();
+    }
+
+    function renderHistory() {
+      const history = JSON.parse(localStorage.getItem('rc_history') || '[]');
+      const card = document.getElementById('history-card');
+      const list = document.getElementById('history-list');
+
+      if (!history.length) {
+        card.classList.add('hidden');
+        list.innerHTML = '';
+        return;
+      }
+
+      card.classList.remove('hidden');
+      list.innerHTML = history.map((h) => `
+        <button
+          type="button"
+          onclick="loadFromHistory('${encodeURIComponent(h.url)}')"
+          class="w-full text-left px-3 py-2.5 rounded-2xl bg-slate-950/75 hover:bg-slate-800/80 border border-slate-800/80 flex items-center justify-between gap-2 transition">
+          <div class="min-w-0">
+            <p class="text-xs font-medium text-slate-200 truncate">${escapeHtml(h.author)}</p>
+            <p class="text-[11px] text-slate-400 truncate">${escapeHtml(h.title)}</p>
+          </div>
+          <span class="text-[11px] font-mono text-rose-400 shrink-0 font-medium">Open</span>
+        </button>
+      `).join('');
+    }
+
+    async function downloadDirectVideo() {
+      if (!currentVideoUrl) return;
+      const btn = document.getElementById('direct-dl-btn');
+      const btnText = document.getElementById('dl-btn-text');
+      btn.disabled = true;
+      btnText.textContent = 'Preparing download...';
+
+      try {
+        const res = await fetch(currentVideoUrl);
+        if (!res.ok) throw new Error('Fetch failed');
+        const blob = await res.blob();
+        const blobUrl = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = blobUrl;
+        a.download = currentFilename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(blobUrl);
+        btnText.textContent = 'Saved!';
+      } catch (err) {
+        window.open(currentVideoUrl, '_blank', 'noopener,noreferrer');
+        btnText.textContent = 'Opened in Tab';
+      } finally {
+        setTimeout(() => {
+          btnText.textContent = 'Download HD MP4';
+          btn.disabled = false;
+        }, 1800);
+      }
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const url = urlInput.value.trim();
+
+      if (!url || !url.includes('tiktok.com')) {
+        showStatus('Please enter a valid public TikTok URL.');
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Fetching...';
+      hideStatus();
+      resultBox.classList.add('hidden');
+
+      try {
+        const apiUrl = `https://www.tikwm.com/api/?url=${encodeURIComponent(url)}&hd=1`;
+        const res = await fetch(apiUrl);
+        const json = await res.json();
+
+        if (!json || json.code !== 0 || !json.data) {
+          showStatus(json?.msg || 'Could not fetch video. Make sure the post is public.');
+          return;
+        }
+
+        const data = json.data;
+        currentVideoUrl = data.hdplay || data.play;
+
+        if (!currentVideoUrl) {
+          showStatus('No watermark-free video stream found for this link.');
+          return;
+        }
+
+        const username = data.author?.unique_id ? `@${data.author.unique_id}` : 'Creator';
+        const title = data.title || 'TikTok Video';
+        currentFilename = `${(data.author?.unique_id || 'regentclean')}-${data.id || Date.now()}.mp4`;
+
+        document.getElementById('author-avatar').src = data.author?.avatar || data.cover || '';
+        document.getElementById('author-label').textContent = username;
+        document.getElementById('title-label').textContent = title;
+
+        document.getElementById('stat-plays').textContent = formatCount(data.play_count);
+        document.getElementById('stat-likes').textContent = formatCount(data.digg_count);
+        document.getElementById('stat-shares').textContent = formatCount(data.share_count);
+
+        const videoEl = document.getElementById('video-preview');
+        videoEl.src = currentVideoUrl;
+        videoEl.poster = data.cover || '';
+
+        const audioLink = document.getElementById('audio-link');
+        if (data.music) {
+          audioLink.href = data.music;
+          audioLink.classList.remove('hidden');
+        } else {
+          audioLink.classList.add('hidden');
+        }
+
+        const coverLink = document.getElementById('cover-link');
+        if (data.cover) {
+          coverLink.href = data.cover;
+          coverLink.classList.remove('hidden');
+        } else {
+          coverLink.classList.add('hidden');
+        }
+
+        saveToHistory({ url, author: username, title });
+        resultBox.classList.remove('hidden');
+      } catch (err) {
+        showStatus('Network error while fetching video details.');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i data-lucide="sparkles" class="w-4 h-4"></i><span>Get Clean Video</span>';
+        lucide.createIcons();
+      }
+    });
+
+    // --- Video-to-Audio Converter Logic ---
+    const fileInput = document.getElementById('video-file-input');
+    const fileNameLabel = document.getElementById('file-chosen-name');
+    const convertBtn = document.getElementById('convert-audio-btn');
+    const convertBtnText = document.getElementById('convert-btn-text');
+    const stopExtractBtn = document.getElementById('stop-extract-btn');
+    const audioStatus = document.getElementById('audio-status');
+    const audioResult = document.getElementById('audio-result');
+    const extractedPlayer = document.getElementById('extracted-audio-player');
+    const extractedDownload = document.getElementById('extracted-audio-download');
+
+    let selectedVideoFile = null;
+    let activeRecorder = null;
+    let activeTempVideo = null;
+
+    fileInput.addEventListener('change', () => {
+      const file = fileInput.files && fileInput.files[0];
+      audioStatus.classList.add('hidden');
+      audioResult.classList.add('hidden');
+
+      if (!file) {
+        selectedVideoFile = null;
+        fileNameLabel.textContent = 'Upload Video';
+        convertBtn.disabled = true;
+        return;
+      }
+
+      selectedVideoFile = file;
+      fileNameLabel.textContent = file.name;
+      convertBtn.disabled = false;
+    });
+
+    function stopExtractionEarly() {
+      if (activeTempVideo) {
+        activeTempVideo.pause();
+      }
+      if (activeRecorder && activeRecorder.state !== 'inactive') {
+        activeRecorder.stop();
+      }
+    }
+
+    async function extractAudioFromVideo() {
+      if (!selectedVideoFile) return;
+
+      if (typeof MediaRecorder === 'undefined') {
+        audioStatus.textContent = 'Audio recording is not supported on this mobile browser.';
+        audioStatus.classList.remove('hidden');
+        return;
+      }
+
+      convertBtn.disabled = true;
+      convertBtnText.textContent = 'Extracting audio...';
+      stopExtractBtn.classList.remove('hidden');
+      audioStatus.classList.add('hidden');
+      audioResult.classList.add('hidden');
+
+      const tempVideo = document.createElement('video');
+      activeTempVideo = tempVideo;
+      tempVideo.src = URL.createObjectURL(selectedVideoFile);
+      tempVideo.muted = false;
+      tempVideo.playsInline = true;
+
+      try {
+        await new Promise((resolve, reject) => {
+          tempVideo.onloadedmetadata = resolve;
+          tempVideo.onerror = () => reject(new Error('Could not load video file'));
+        });
+
+        const stream = tempVideo.captureStream ? tempVideo.captureStream() : tempVideo.mozCaptureStream();
+        const audioTracks = stream ? stream.getAudioTracks() : [];
+
+        if (!audioTracks || audioTracks.length === 0) {
+          throw new Error('No audio track detected in this video.');
+        }
+
+        const audioStream = new MediaStream(audioTracks);
+        const mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
+          ? 'audio/webm;codecs=opus'
+          : (MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : '');
+
+        const recorder = mimeType
+          ? new MediaRecorder(audioStream, { mimeType })
+          : new MediaRecorder(audioStream);
+        activeRecorder = recorder;
+
+        const chunks = [];
+        recorder.ondataavailable = (e) => {
+          if (e.data && e.data.size > 0) chunks.push(e.data);
+        };
+
+        const stopped = new Promise((resolve) => {
+          recorder.onstop = resolve;
+        });
+
+        recorder.start();
+        await tempVideo.play();
+
+        tempVideo.onended = () => {
+          if (recorder.state !== 'inactive') recorder.stop();
+        };
+
+        await stopped;
+
+        const blob = new Blob(chunks, { type: mimeType || 'audio/webm' });
+        const audioUrl = URL.createObjectURL(blob);
+        const baseName = selectedVideoFile.name.replace(/\.[^/.]+$/, '') || 'regentclean-audio';
+
+        extractedPlayer.src = audioUrl;
+        extractedDownload.href = audioUrl;
+        extractedDownload.download = `${baseName}.webm`;
+        audioResult.classList.remove('hidden');
+      } catch (err) {
+        audioStatus.textContent = err.message || 'Unable to extract audio from this video.';
+        audioStatus.classList.remove('hidden');
+      } finally {
+        URL.revokeObjectURL(tempVideo.src);
+        activeRecorder = null;
+        activeTempVideo = null;
+        stopExtractBtn.classList.add('hidden');
+        convertBtn.disabled = false;
+        convertBtnText.textContent = 'Upload & Convert to Audio';
+      }
+    }
+
+    renderHistory();
+  </script>
+</body>
+</html>
