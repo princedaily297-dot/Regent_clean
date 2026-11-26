@@ -51,6 +51,10 @@
       box-shadow: 0 24px 60px -15px rgba(0, 0, 0, 0.65);
     }
 
+    .is-hidden {
+      display: none !important;
+    }
+
     /* Live Orbital Hero Animations */
     @keyframes orbitSpin {
       0% { transform: rotate(0deg); }
@@ -175,20 +179,20 @@
     </section>
 
     <!-- Mode Switcher Tabs -->
-    <div class="grid grid-cols-2 gap-1.5 p-1.5 rounded-2xl glass-panel">
+    <div class="grid grid-cols-2 gap-1.5 p-1.5 rounded-2xl glass-panel" role="tablist">
       <button
         type="button"
         id="tab-tiktok"
-        onclick="switchMode('tiktok')"
+        data-mode="tiktok"
         class="py-2.5 px-3 rounded-xl text-xs font-display font-semibold flex items-center justify-center gap-1.5 bg-rose-600 text-white shadow-md shadow-rose-600/25 transition cursor-pointer">
-        <span>Clean Video</span>
+        Clean Video
       </button>
       <button
         type="button"
         id="tab-audio"
-        onclick="switchMode('audio')"
+        data-mode="audio"
         class="py-2.5 px-3 rounded-xl text-xs font-display font-semibold flex items-center justify-center gap-1.5 text-slate-300 hover:text-white hover:bg-slate-800/60 transition cursor-pointer">
-        <span>Video to Audio</span>
+        Video to Audio
       </button>
     </div>
 
@@ -211,7 +215,6 @@
           <button
             type="button"
             id="paste-btn"
-            onclick="handlePasteOrClear()"
             class="absolute right-2 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-medium text-slate-200 transition cursor-pointer">
             <span id="paste-label">Paste</span>
           </button>
@@ -226,7 +229,7 @@
       </form>
 
       <!-- Orbital Loading Animation While Link Resolves -->
-      <div id="loading-skeleton" class="hidden pt-3 border-t border-slate-800/90">
+      <div id="loading-skeleton" class="is-hidden pt-3 border-t border-slate-800/90">
         <div class="rounded-2xl bg-slate-950/90 border border-rose-500/30 p-4 flex items-center gap-4">
           <div class="relative w-11 h-11 flex items-center justify-center shrink-0">
             <div class="link-orbit-outer"></div>
@@ -239,11 +242,11 @@
         </div>
       </div>
 
-      <div id="status-msg" class="hidden text-xs text-amber-200 bg-amber-500/10 border border-amber-500/25 rounded-2xl p-3">
+      <div id="status-msg" class="is-hidden text-xs text-amber-200 bg-amber-500/10 border border-amber-500/25 rounded-2xl p-3">
         <span id="status-text"></span>
       </div>
 
-      <div id="result-box" class="hidden pt-4 border-t border-slate-800/90 space-y-3.5">
+      <div id="result-box" class="is-hidden pt-4 border-t border-slate-800/90 space-y-3.5">
         <div class="flex items-center gap-3">
           <img
             id="author-avatar"
@@ -280,7 +283,6 @@
           <button
             type="button"
             id="direct-dl-btn"
-            onclick="downloadDirectVideo()"
             class="w-full bg-emerald-600 hover:bg-emerald-500 active:scale-[0.99] transition py-3 rounded-2xl font-display text-xs font-semibold text-white shadow-lg shadow-emerald-600/20 flex items-center justify-center gap-2 cursor-pointer">
             <span id="dl-btn-text">Download HD MP4</span>
           </button>
@@ -291,26 +293,26 @@
               target="_blank"
               rel="noopener noreferrer"
               class="py-2.5 px-3 rounded-xl bg-slate-800/90 hover:bg-slate-700 text-xs font-medium text-slate-200 flex items-center justify-center gap-1.5 transition">
-              <span>Audio</span>
+              Audio
             </a>
             <a
               id="cover-link"
               target="_blank"
               rel="noopener noreferrer"
               class="py-2.5 px-3 rounded-xl bg-slate-800/90 hover:bg-slate-700 text-xs font-medium text-slate-200 flex items-center justify-center gap-1.5 transition">
-              <span>Cover</span>
+              Cover
             </a>
           </div>
         </div>
       </div>
 
       <!-- Recent History -->
-      <div id="history-card" class="hidden pt-4 border-t border-slate-800/80">
+      <div id="history-card" class="is-hidden pt-4 border-t border-slate-800/80">
         <div class="flex items-center justify-between mb-2.5">
           <span class="text-xs font-display font-semibold text-slate-300">Recent</span>
           <button
             type="button"
-            onclick="clearHistory()"
+            id="clear-history-btn"
             class="text-[11px] text-slate-400 hover:text-rose-400 transition cursor-pointer">
             Clear
           </button>
@@ -320,7 +322,7 @@
     </section>
 
     <!-- VIEW 2: Video to Audio Page (Upload Video) -->
-    <section id="panel-audio" class="hidden glass-panel rounded-3xl p-5 space-y-4">
+    <section id="panel-audio" class="is-hidden glass-panel rounded-3xl p-5 space-y-4">
       <div class="flex items-center justify-between gap-2">
         <div>
           <span class="text-[10px] font-mono uppercase tracking-wider text-indigo-300">Audio Studio</span>
@@ -328,7 +330,7 @@
         </div>
         <button
           type="button"
-          onclick="switchMode('tiktok')"
+          id="back-to-clean-btn"
           class="px-2.5 py-1.5 rounded-xl bg-slate-800/90 hover:bg-slate-700 text-xs font-medium text-slate-200 transition cursor-pointer">
           ← Clean Video
         </button>
@@ -347,7 +349,7 @@
       </label>
 
       <!-- Live Equalizer Loader While Extracting Audio -->
-      <div id="audio-loader" class="hidden rounded-2xl bg-slate-950/90 border border-indigo-400/35 p-3.5 flex items-center justify-between">
+      <div id="audio-loader" class="is-hidden rounded-2xl bg-slate-950/90 border border-indigo-400/35 p-3.5 flex items-center justify-between">
         <div class="flex items-center gap-3">
           <div class="flex items-end gap-1 h-5">
             <span class="rc-eq-bar bg-indigo-400"></span>
@@ -365,7 +367,6 @@
         <button
           type="button"
           id="convert-audio-btn"
-          onclick="extractAudioFromVideo()"
           disabled
           class="flex-1 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-45 disabled:cursor-not-allowed active:scale-[0.99] transition py-3 rounded-2xl font-display font-semibold text-sm text-white shadow-lg shadow-indigo-600/25 flex items-center justify-center gap-2.5 cursor-pointer">
           <span id="convert-btn-text">Upload &amp; Convert to Audio</span>
@@ -374,21 +375,20 @@
         <button
           type="button"
           id="stop-extract-btn"
-          onclick="stopExtractionEarly()"
-          class="hidden px-4 py-3 rounded-2xl bg-rose-600 hover:bg-rose-500 font-display font-semibold text-xs text-white transition cursor-pointer">
+          class="is-hidden px-4 py-3 rounded-2xl bg-rose-600 hover:bg-rose-500 font-display font-semibold text-xs text-white transition cursor-pointer">
           Stop &amp; Save
         </button>
       </div>
 
-      <div id="audio-status" class="hidden text-xs text-amber-200 bg-amber-500/10 border border-amber-500/25 rounded-2xl p-3"></div>
+      <div id="audio-status" class="is-hidden text-xs text-amber-200 bg-amber-500/10 border border-amber-500/25 rounded-2xl p-3"></div>
 
-      <div id="audio-result" class="hidden pt-3 border-t border-slate-800/90 space-y-3">
+      <div id="audio-result" class="is-hidden pt-3 border-t border-slate-800/90 space-y-3">
         <audio id="extracted-audio-player" controls class="w-full"></audio>
         <a
           id="extracted-audio-download"
           download="regentclean-audio.webm"
           class="w-full bg-emerald-600 hover:bg-emerald-500 transition py-2.5 px-4 rounded-2xl font-display text-xs font-semibold text-white flex items-center justify-center gap-2">
-          <span>Download Audio File</span>
+          Download Audio File
         </a>
       </div>
     </section>
@@ -409,21 +409,35 @@
     const tabAudio = document.getElementById('tab-audio');
     const panelTiktok = document.getElementById('panel-tiktok');
     const panelAudio = document.getElementById('panel-audio');
+    const backToCleanBtn = document.getElementById('back-to-clean-btn');
+
+    function setElementVisible(el, visible) {
+      if (!el) return;
+      if (visible) {
+        el.classList.remove('is-hidden');
+      } else {
+        el.classList.add('is-hidden');
+      }
+    }
 
     function switchMode(mode) {
-      if (mode === 'audio') {
-        panelAudio.classList.remove('hidden');
-        panelTiktok.classList.add('hidden');
+      const isAudio = mode === 'audio';
+      setElementVisible(panelAudio, isAudio);
+      setElementVisible(panelTiktok, !isAudio);
+
+      if (isAudio) {
         tabAudio.className = 'py-2.5 px-3 rounded-xl text-xs font-display font-semibold flex items-center justify-center gap-1.5 bg-indigo-600 text-white shadow-md shadow-indigo-600/25 transition cursor-pointer';
         tabTiktok.className = 'py-2.5 px-3 rounded-xl text-xs font-display font-semibold flex items-center justify-center gap-1.5 text-slate-300 hover:text-white hover:bg-slate-800/60 transition cursor-pointer';
       } else {
-        panelTiktok.classList.remove('hidden');
-        panelAudio.classList.add('hidden');
         tabTiktok.className = 'py-2.5 px-3 rounded-xl text-xs font-display font-semibold flex items-center justify-center gap-1.5 bg-rose-600 text-white shadow-md shadow-rose-600/25 transition cursor-pointer';
         tabAudio.className = 'py-2.5 px-3 rounded-xl text-xs font-display font-semibold flex items-center justify-center gap-1.5 text-slate-300 hover:text-white hover:bg-slate-800/60 transition cursor-pointer';
       }
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
+
+    tabTiktok.addEventListener('click', () => switchMode('tiktok'));
+    tabAudio.addEventListener('click', () => switchMode('audio'));
+    backToCleanBtn.addEventListener('click', () => switchMode('tiktok'));
 
     const form = document.getElementById('clean-form');
     const urlInput = document.getElementById('tiktok-url');
@@ -432,6 +446,390 @@
     const statusMsg = document.getElementById('status-msg');
     const statusText = document.getElementById('status-text');
     const resultBox = document.getElementById('result-box');
+    const pasteBtn = document.getElementById('paste-btn');
     const pasteLabel = document.getElementById('paste-label');
+    const directDlBtn = document.getElementById('direct-dl-btn');
+    const clearHistoryBtn = document.getElementById('clear-history-btn');
 
-    let currentVideoUrl
+    let currentVideoUrl = '';
+    let currentFilename = 'regentclean.mp4';
+
+    function setSubmitLoading(isLoading) {
+      submitBtn.disabled = isLoading;
+      if (isLoading) {
+        submitBtn.innerHTML = '<span>Resolving Link...</span>';
+        setElementVisible(loadingSkeleton, true);
+      } else {
+        submitBtn.innerHTML = '<span id="submit-btn-text">Get Clean Video</span>';
+        setElementVisible(loadingSkeleton, false);
+      }
+    }
+
+    function escapeHtml(str) {
+      return String(str || '').replace(/[&<>"']/g, (ch) => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+      }[ch]));
+    }
+
+    function showStatus(message) {
+      statusText.textContent = message;
+      setElementVisible(statusMsg, true);
+    }
+
+    function hideStatus() {
+      setElementVisible(statusMsg, false);
+      statusText.textContent = '';
+    }
+
+    function formatCount(num) {
+      if (typeof num !== 'number' || Number.isNaN(num)) return '—';
+      if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+      if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+      return String(num);
+    }
+
+    urlInput.addEventListener('input', () => {
+      hideStatus();
+      pasteLabel.textContent = urlInput.value.trim() ? 'Clear' : 'Paste';
+    });
+
+    async function handlePasteOrClear() {
+      if (urlInput.value.trim()) {
+        urlInput.value = '';
+        pasteLabel.textContent = 'Paste';
+        hideStatus();
+        urlInput.focus();
+        return;
+      }
+
+      try {
+        if (navigator.clipboard && navigator.clipboard.readText) {
+          const text = await navigator.clipboard.readText();
+          if (text) {
+            urlInput.value = text.trim();
+            pasteLabel.textContent = 'Clear';
+            hideStatus();
+            return;
+          }
+        }
+        showStatus('Tap inside the box and paste your link from your keyboard.');
+      } catch (err) {
+        showStatus('Tap inside the box and paste your link from your keyboard.');
+      }
+    }
+
+    pasteBtn.addEventListener('click', handlePasteOrClear);
+
+    function saveToHistory(item) {
+      try {
+        let history = JSON.parse(localStorage.getItem('rc_history') || '[]');
+        history = history.filter((h) => h.url !== item.url);
+        history.unshift(item);
+        history = history.slice(0, 5);
+        localStorage.setItem('rc_history', JSON.stringify(history));
+        renderHistory();
+      } catch (e) {}
+    }
+
+    function clearHistory() {
+      try {
+        localStorage.removeItem('rc_history');
+      } catch (e) {}
+      renderHistory();
+    }
+
+    clearHistoryBtn.addEventListener('click', clearHistory);
+
+    function renderHistory() {
+      let history = [];
+      try {
+        history = JSON.parse(localStorage.getItem('rc_history') || '[]');
+      } catch (e) {}
+
+      const card = document.getElementById('history-card');
+      const list = document.getElementById('history-list');
+
+      if (!history.length) {
+        setElementVisible(card, false);
+        list.innerHTML = '';
+        return;
+      }
+
+      setElementVisible(card, true);
+      list.innerHTML = history.map((h) => `
+        <button
+          type="button"
+          data-history-url="${encodeURIComponent(h.url)}"
+          class="history-item w-full text-left px-3 py-2.5 rounded-2xl bg-slate-950/75 hover:bg-slate-800/80 border border-slate-800/80 flex items-center justify-between gap-2 transition cursor-pointer">
+          <div class="min-w-0">
+            <p class="text-xs font-medium text-slate-200 truncate">${escapeHtml(h.author)}</p>
+            <p class="text-[11px] text-slate-400 truncate">${escapeHtml(h.title)}</p>
+          </div>
+          <span class="text-[11px] font-mono text-rose-400 shrink-0 font-medium">Open</span>
+        </button>
+      `).join('');
+
+      list.querySelectorAll('.history-item').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const decoded = decodeURIComponent(btn.getAttribute('data-history-url') || '');
+          if (!decoded) return;
+          urlInput.value = decoded;
+          pasteLabel.textContent = 'Clear';
+          form.dispatchEvent(new Event('submit', { cancelable: true }));
+        });
+      });
+    }
+
+    async function downloadDirectVideo() {
+      if (!currentVideoUrl) return;
+      directDlBtn.disabled = true;
+      directDlBtn.innerHTML = '<span>Preparing download...</span>';
+
+      try {
+        const res = await fetch(currentVideoUrl);
+        if (!res.ok) throw new Error('Fetch failed');
+        const blob = await res.blob();
+        const blobUrl = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = blobUrl;
+        a.download = currentFilename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(blobUrl), 2000);
+        directDlBtn.innerHTML = '<span>Saved!</span>';
+      } catch (err) {
+        window.open(currentVideoUrl, '_blank', 'noopener,noreferrer');
+        directDlBtn.innerHTML = '<span>Opened in Tab</span>';
+      } finally {
+        setTimeout(() => {
+          directDlBtn.innerHTML = '<span id="dl-btn-text">Download HD MP4</span>';
+          directDlBtn.disabled = false;
+        }, 1800);
+      }
+    }
+
+    directDlBtn.addEventListener('click', downloadDirectVideo);
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const url = urlInput.value.trim();
+
+      if (!url || !url.includes('tiktok.com')) {
+        showStatus('Please enter a valid public TikTok URL.');
+        return;
+      }
+
+      hideStatus();
+      setElementVisible(resultBox, false);
+      setSubmitLoading(true);
+
+      try {
+        const apiUrl = `https://www.tikwm.com/api/?url=${encodeURIComponent(url)}&hd=1`;
+        const res = await fetch(apiUrl);
+        if (!res.ok) {
+          showStatus('Lookup service returned an error. Try again in a moment.');
+          return;
+        }
+        const json = await res.json();
+
+        if (!json || json.code !== 0 || !json.data) {
+          showStatus(json?.msg || 'Could not fetch video. Make sure the post is public.');
+          return;
+        }
+
+        const data = json.data;
+        currentVideoUrl = data.hdplay || data.play;
+
+        if (!currentVideoUrl) {
+          showStatus('No watermark-free video stream found for this link.');
+          return;
+        }
+
+        const username = data.author?.unique_id ? `@${data.author.unique_id}` : 'Creator';
+        const title = data.title || 'TikTok Video';
+        currentFilename = `${(data.author?.unique_id || 'regentclean')}-${data.id || Date.now()}.mp4`;
+
+        document.getElementById('author-avatar').src = data.author?.avatar || data.cover || '';
+        document.getElementById('author-label').textContent = username;
+        document.getElementById('title-label').textContent = title;
+
+        document.getElementById('stat-plays').textContent = formatCount(data.play_count);
+        document.getElementById('stat-likes').textContent = formatCount(data.digg_count);
+        document.getElementById('stat-shares').textContent = formatCount(data.share_count);
+
+        const videoEl = document.getElementById('video-preview');
+        videoEl.src = currentVideoUrl;
+        videoEl.poster = data.cover || '';
+        videoEl.onerror = () => {
+          showStatus('Preview stream blocked by browser/network; tap Download HD MP4 to open or save directly.');
+        };
+
+        const audioLink = document.getElementById('audio-link');
+        if (data.music) {
+          audioLink.href = data.music;
+          setElementVisible(audioLink, true);
+        } else {
+          setElementVisible(audioLink, false);
+        }
+
+        const coverLink = document.getElementById('cover-link');
+        if (data.cover) {
+          coverLink.href = data.cover;
+          setElementVisible(coverLink, true);
+        } else {
+          setElementVisible(coverLink, false);
+        }
+
+        saveToHistory({ url, author: username, title });
+        setElementVisible(resultBox, true);
+      } catch (err) {
+        showStatus('Network error while fetching video details. Please try again.');
+      } finally {
+        setSubmitLoading(false);
+      }
+    });
+
+    const fileInput = document.getElementById('video-file-input');
+    const fileNameLabel = document.getElementById('file-chosen-name');
+    const convertBtn = document.getElementById('convert-audio-btn');
+    const stopExtractBtn = document.getElementById('stop-extract-btn');
+    const audioLoader = document.getElementById('audio-loader');
+    const audioStatus = document.getElementById('audio-status');
+    const audioResult = document.getElementById('audio-result');
+    const extractedPlayer = document.getElementById('extracted-audio-player');
+    const extractedDownload = document.getElementById('extracted-audio-download');
+
+    let selectedVideoFile = null;
+    let activeRecorder = null;
+    let activeTempVideo = null;
+
+    fileInput.addEventListener('change', () => {
+      const file = fileInput.files && fileInput.files[0];
+      setElementVisible(audioStatus, false);
+      setElementVisible(audioResult, false);
+
+      if (!file) {
+        selectedVideoFile = null;
+        fileNameLabel.textContent = 'Upload Video';
+        convertBtn.disabled = true;
+        return;
+      }
+
+      selectedVideoFile = file;
+      fileNameLabel.textContent = file.name;
+      convertBtn.disabled = false;
+    });
+
+    function stopExtractionEarly() {
+      if (activeTempVideo) {
+        activeTempVideo.pause();
+      }
+      if (activeRecorder && activeRecorder.state !== 'inactive') {
+        activeRecorder.stop();
+      }
+    }
+
+    stopExtractBtn.addEventListener('click', stopExtractionEarly);
+
+    async function extractAudioFromVideo() {
+      if (!selectedVideoFile) return;
+
+      if (typeof MediaRecorder === 'undefined') {
+        audioStatus.textContent = 'Audio recording is not supported on this mobile browser.';
+        setElementVisible(audioStatus, true);
+        return;
+      }
+
+      convertBtn.disabled = true;
+      convertBtn.innerHTML = '<span>Extracting...</span>';
+      setElementVisible(audioLoader, true);
+      setElementVisible(stopExtractBtn, true);
+      setElementVisible(audioStatus, false);
+      setElementVisible(audioResult, false);
+
+      const tempVideo = document.createElement('video');
+      activeTempVideo = tempVideo;
+      tempVideo.src = URL.createObjectURL(selectedVideoFile);
+      tempVideo.muted = false;
+      tempVideo.playsInline = true;
+
+      try {
+        await new Promise((resolve, reject) => {
+          tempVideo.onloadedmetadata = resolve;
+          tempVideo.onerror = () => reject(new Error('Could not load video file'));
+        });
+
+        const stream = tempVideo.captureStream ? tempVideo.captureStream() : tempVideo.mozCaptureStream();
+        const audioTracks = stream ? stream.getAudioTracks() : [];
+
+        if (!audioTracks || audioTracks.length === 0) {
+          throw new Error('No audio track detected in this video.');
+        }
+
+        const audioStream = new MediaStream(audioTracks);
+        const mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
+          ? 'audio/webm;codecs=opus'
+          : (MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : '');
+
+        const recorder = mimeType
+          ? new MediaRecorder(audioStream, { mimeType })
+          : new MediaRecorder(audioStream);
+        activeRecorder = recorder;
+
+        const chunks = [];
+        recorder.ondataavailable = (e) => {
+          if (e.data && e.data.size > 0) chunks.push(e.data);
+        };
+
+        const stopped = new Promise((resolve) => {
+          recorder.onstop = resolve;
+        });
+
+        recorder.start();
+        await tempVideo.play();
+
+        tempVideo.onended = () => {
+          if (recorder.state !== 'inactive') recorder.stop();
+        };
+
+        await stopped;
+
+        const blob = new Blob(chunks, { type: mimeType || 'audio/webm' });
+        const audioUrl = URL.createObjectURL(blob);
+        const baseName = selectedVideoFile.name.replace(/\.[^/.]+$/, '') || 'regentclean-audio';
+
+        extractedPlayer.src = audioUrl;
+        extractedDownload.href = audioUrl;
+        extractedDownload.download = `${baseName}.webm`;
+        setElementVisible(audioResult, true);
+      } catch (err) {
+        audioStatus.textContent = err.message || 'Unable to extract audio from this video.';
+        setElementVisible(audioStatus, true);
+      } finally {
+        URL.revokeObjectURL(tempVideo.src);
+        activeRecorder = null;
+        activeTempVideo = null;
+        setElementVisible(audioLoader, false);
+        setElementVisible(stopExtractBtn, false);
+        convertBtn.disabled = false;
+        convertBtn.innerHTML = '<span id="convert-btn-text">Upload &amp; Convert to Audio</span>';
+      }
+    }
+
+    convertBtn.addEventListener('click', extractAudioFromVideo);
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./service-worker.js').catch(() => {});
+      });
+    }
+
+    renderHistory();
+  </script>
+</body>
+</html>
