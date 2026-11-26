@@ -1,0 +1,25 @@
+{
+  "name": "RegentClean • REGENT_TECH",
+  "short_name": "RegentClean",
+  "description": "Watermark-free video resolver and video-to-audio studio by REGENT_TECH.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#05070f",
+  "theme_color": "#05070f",
+  "icons": [
+    {
+      "src": "https://i.ibb.co/6R5gDdNP/file-00000000583881f4850db020c90ef767.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "https://i.ibb.co/6R5gDdNP/file-00000000583881f4850db020c90ef767.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
